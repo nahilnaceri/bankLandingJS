@@ -10,7 +10,11 @@ const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
-
+const nav = document.querySelector('.nav');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsBtn = document.querySelectorAll('.operations__tab');
+const tabsContent = document.querySelectorAll('.operations__content');
+const section2 = document.querySelector('#section--2');
 const openModal = function() {
   modal.classList.remove('hidden');
   overlay.classList.remove('hidden');
@@ -57,7 +61,7 @@ const allSections = document.querySelectorAll('section');
 const btnScroll = document.querySelector('.btn--scroll-to');
 const navButtons = document.querySelectorAll('.nav__link');
 const section1 = document.querySelector('#section--1');
-const section2 = document.querySelector('#section--2');
+// const section2 = document.querySelector('#section--2');
 const section3 = document.querySelector('#section--3');
 
 // Page Navigation
@@ -104,10 +108,6 @@ btnScroll.addEventListener('click', function(e) {
 // using delegates instead of looping through all buttons
 // by using the parent element
 
-const tabsContainer = document.querySelector('.operations__tab-container');
-const tabsBtn = document.querySelectorAll('.operations__tab');
-const tabsContent = document.querySelectorAll('.operations__content');
-
 tabsContainer.addEventListener('click', function(e) {
   const clickedTab = e.target.closest('.operations__tab');
 
@@ -120,4 +120,63 @@ tabsContainer.addEventListener('click', function(e) {
   document
     .querySelector(`.operations__content--${clickedTab.dataset.tab}`)
     .classList.add('operations__content--active');
+});
+
+// Menu Fade animation
+const handleHover = function(e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = this;
+    });
+    logo.style.opacity = this;
+  }
+};
+
+nav.addEventListener('mouseover', handleHover.bind(0.5));
+nav.addEventListener('mouseout', handleHover.bind(1));
+
+const sectionPos = section2.getBoundingClientRect();
+// sticky navigation
+// window.addEventListener('scroll', function() {
+//   if (window.scrollY > sectionPos.top) {
+//     nav.classList.add('sticky');
+//   } else nav.classList.remove('sticky');
+// });
+
+const header = document.querySelector('.header');
+const navHeight = nav.getBoundingClientRect().height;
+const stickyNav = function(entries) {
+  const [entry] = entries;
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${navHeight}px`
+});
+headerObserver.observe(header);
+
+const revealSection = function(entries, observer) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+  entry.target.classList.remove('section--hidden');
+  observer.unobserve(entry.target);
+};
+
+// section scrolling observing
+const sections = document.querySelectorAll('.section');
+const sectionObserver = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.1
+});
+
+sections.forEach(section => {
+  sectionObserver.observe(section);
+  section.classList.add('section--hidden');
 });
