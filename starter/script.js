@@ -99,3 +99,25 @@ btnScroll.addEventListener('click', function(e) {
   // });
   section1.scrollIntoView({ behavior: 'smooth' });
 });
+
+// Tabbed component
+// using delegates instead of looping through all buttons
+// by using the parent element
+
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsBtn = document.querySelectorAll('.operations__tab');
+const tabsContent = document.querySelectorAll('.operations__content');
+
+tabsContainer.addEventListener('click', function(e) {
+  const clickedTab = e.target.closest('.operations__tab');
+
+  if (!clickedTab) return;
+  tabsBtn.forEach(btn => btn.classList.remove('operations__tab--active'));
+  clickedTab.classList.add('operations__tab--active');
+  tabsContent.forEach(tct =>
+    tct.classList.remove('operations__content--active')
+  );
+  document
+    .querySelector(`.operations__content--${clickedTab.dataset.tab}`)
+    .classList.add('operations__content--active');
+});
